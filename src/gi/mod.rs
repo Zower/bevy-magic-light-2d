@@ -100,12 +100,10 @@ impl Plugin for BevyMagicLight2DPlugin {
 
         let mut render_graph = render_app.world.resource_mut::<RenderGraph>();
         render_graph.add_node("light_pass_2d", LightPass2DNode::default());
-        render_graph
-            .add_node_edge(
-                "light_pass_2d",
-                bevy::render::main_graph::node::CAMERA_DRIVER,
-            )
-            .unwrap();
+        render_graph.add_node_edge(
+            "light_pass_2d",
+            bevy::render::main_graph::node::CAMERA_DRIVER,
+        );
     }
 }
 
@@ -114,14 +112,14 @@ struct LightPass2DNode {}
 
 #[rustfmt::skip]
 pub(crate) fn detect_target_sizes(
-        windows:       Res<Windows>,
+    mut windows:       Query<&mut Window>,
     mut target_sizes:  ResMut<ComputedTargetSizes>)
 {
 
-    let window       = windows.get_primary().expect("No primary window");
+    let window       = windows.get_single_mut().expect("No primary window");
     let primary_size = Vec2::new(
-        (window.physical_width()  as f64 / window.backend_scale_factor()) as f32,
-        (window.physical_height() as f64 / window.backend_scale_factor()) as f32,
+        (window.physical_width()  as f64 / window.resolution.base_scale_factor()) as f32,
+        (window.physical_height() as f64 / window.resolution.base_scale_factor()) as f32,
     );
 
     target_sizes.primary_target_size  = primary_size;
@@ -171,7 +169,7 @@ impl render_graph::Node for LightPass2DNode {
 
                 let mut pass =
                     render_context
-                        .command_encoder
+                        .command_encoder()
                         .begin_compute_pass(&ComputePassDescriptor {
                             label: Some("light_pass_2d".into()),
                         });

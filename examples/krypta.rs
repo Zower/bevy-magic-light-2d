@@ -3,7 +3,8 @@ use bevy::render::camera::RenderTarget;
 use bevy::render::render_resource::{FilterMode, SamplerDescriptor};
 use bevy::render::view::RenderLayers;
 use bevy::sprite::MaterialMesh2dBundle;
-use bevy_inspector_egui::prelude::*;
+use bevy::window::{WindowMode, WindowResolution};
+use bevy_inspector_egui::quick::{ResourceInspectorPlugin, WorldInspectorPlugin};
 use bevy_magic_light_2d::prelude::*;
 use rand::prelude::*;
 
@@ -30,14 +31,17 @@ fn main() {
                     ..default()
                 })
                 .set(WindowPlugin {
-                    window: WindowDescriptor {
-                        width: SCREEN_SIZE.0,
-                        height: SCREEN_SIZE.1,
+                    primary_window: Some(Window {
+                        resolution: WindowResolution {
+                            physical_width: SCREEN_SIZE.0 as u32,
+                            physical_height: SCREEN_SIZE.1 as u32,
+                            ..default()
+                        },
                         title: "Bevy Magic Light 2D: Krypta Example".into(),
                         resizable: false,
                         mode: WindowMode::Windowed,
                         ..default()
-                    },
+                    }),
                     ..default()
                 })
                 .set(ImagePlugin {
@@ -58,8 +62,8 @@ fn main() {
                 ..default()
             },
         })
-        .add_plugin(WorldInspectorPlugin::new())
-        .add_plugin(InspectorPlugin::<BevyMagicLight2DSettings>::new())
+        .add_plugin(WorldInspectorPlugin::enew())
+        .add_plugin(ResourceInspectorPlugin::<BevyMagicLight2DSettings>::new())
         .register_inspectable::<LightOccluder2D>()
         .register_inspectable::<OmniLightSource2D>()
         .register_inspectable::<SkylightMask2D>()

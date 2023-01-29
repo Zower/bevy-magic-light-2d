@@ -173,7 +173,7 @@ pub fn setup_post_processing_camera(
         Camera2dBundle {
             camera: Camera {
                 // renders after the first main camera which has default value: 0.
-                priority: 1,
+                order: 1,
                 hdr: true,
                 ..default()
             },
